@@ -1,7 +1,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
-
+using Console = System.Console;
 public class RabbitMQConsumer
 {
     public void Consumir()

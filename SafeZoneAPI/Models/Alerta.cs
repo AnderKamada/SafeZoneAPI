@@ -1,3 +1,9 @@
+using System.Text.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace SafeZoneAPI.Models
 {
     public class Alerta
@@ -8,6 +14,8 @@ namespace SafeZoneAPI.Models
         public DateTime DataEmissao { get; set; }
 
         public int RegiaoRiscoId { get; set; }
+
+        [JsonIgnore]
         public RegiaoRisco? RegiaoRisco { get; set; }
     }
 }

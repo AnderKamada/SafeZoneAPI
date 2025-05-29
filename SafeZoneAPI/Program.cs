@@ -1,6 +1,14 @@
 using AspNetCoreRateLimit;
 using Microsoft.EntityFrameworkCore;
 using SafeZoneAPI.Data;
+using System.Text.Json.Serialization;
+using SafeZoneAPI.Helpers;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using SafeZoneAPI.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace SafeZoneAPI
 {
@@ -10,10 +18,22 @@ namespace SafeZoneAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(x =>
+                    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // 🔐 Rate Limiting
+            builder.Services.AddOptions();
+            builder.Services.AddMemoryCache();
+            builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+            builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+            builder.Services.AddInMemoryRateLimiting();
+            builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+            // 🌐 CORS
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", policy =>
@@ -22,15 +42,14 @@ namespace SafeZoneAPI
                 });
             });
 
-            builder.Services.AddMemoryCache();
-            builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-            builder.Services.AddInMemoryRateLimiting();
-            builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-
+            // 📦 Banco de Dados e RabbitMQ
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IRabbitMQPublisher, RabbitMQPublisher>();
 
             var app = builder.Build();
+
+            app.UseIpRateLimiting();
 
             if (app.Environment.IsDevelopment())
             {

@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using SafeZoneAPI.Data;
 using SafeZoneAPI.Models;
 using SafeZoneAPI.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace SafeZoneAPI.Controllers
@@ -12,11 +16,13 @@ namespace SafeZoneAPI.Controllers
     public class AlertaController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+      private readonly IRabbitMQPublisher _publisher;
 
-        public AlertaController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+    public AlertaController(ApplicationDbContext context, IRabbitMQPublisher publisher)
+{
+    _context = context;
+    _publisher = publisher;
+}
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Alerta>>> GetAll()
@@ -50,17 +56,20 @@ public async Task<ActionResult<object>> GetById(int id)
 
 
         [HttpPost]
-        public async Task<ActionResult<Alerta>> Create(Alerta alerta)
-        {
-            _context.Alertas.Add(alerta);
-            await _context.SaveChangesAsync();
+    public async Task<IActionResult> Create([FromBody] Alerta alerta)
+    {
+    _context.Alertas.Add(alerta);
+    await _context.SaveChangesAsync();
 
-            var publisher = new RabbitMQPublisher();
-            var mensagem = $"[ALERTA] - Risco: {alerta.Nivel} - Região ID: {alerta.RegiaoRiscoId}";
-            publisher.PublicarMensagem(mensagem);
+    var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+    if (string.IsNullOrEmpty(environment) || !environment.Contains("Test"))
+{
+    _publisher.PublicarMensagem("Mensagem de teste");
+}
 
-            return CreatedAtAction(nameof(GetById), new { id = alerta.Id }, alerta);
-        }
+
+    return CreatedAtAction(nameof(GetById), new { id = alerta.Id }, alerta);
+}
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Alerta alerta)

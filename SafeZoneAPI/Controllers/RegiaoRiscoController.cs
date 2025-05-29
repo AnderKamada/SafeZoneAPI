@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SafeZoneAPI.Data;
 using SafeZoneAPI.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SafeZoneAPI.Controllers
 {
@@ -16,13 +20,23 @@ namespace SafeZoneAPI.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RegiaoRisco>>> GetAll()
-        {
-            return await _context.RegioesRisco.Include(r => r.Alertas).ToListAsync();
-        }
+       [HttpGet]
+public async Task<IActionResult> GetAll()
+{
+    try
+    {
+        var regioes = await _context.RegioesRisco
+            .Include(r => r.Alertas)
+            .ToListAsync();
 
-        [HttpGet("{id}")]
+        return Ok(regioes);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Erro em GetAll: {ex.Message}");
+        return StatusCode(500, $"Erro interno: {ex.Message}");
+    }
+}
 public async Task<ActionResult<object>> GetById(int id)
 {
     var regiao = await _context.RegioesRisco
