@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SafeZoneAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bf8994cbc2cae6b17e1ca8b72eb97ca8964724ed")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d62fa241e17bdfab019ce300211390f70d601e03")]
 [assembly: System.Reflection.AssemblyProductAttribute("SafeZoneAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SafeZoneAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
