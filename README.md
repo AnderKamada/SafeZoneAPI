@@ -46,7 +46,7 @@ SQL Server LocalDB
 
 2. Clonar o repositório:
 
-git clone https://github.com/seuusuario/SafeZoneAPI.git
+git clone https://github.com/AnderKamada/SafeZoneAPI.git
 cd SafeZoneAPI
 
 3. Aplicar as Migrations (caso não tenha o banco criado):
