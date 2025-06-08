@@ -27,37 +27,36 @@ namespace SafeZoneAPI.Controllers
         }
 
         [HttpGet("{id}")]
-public async Task<ActionResult<object>> GetById(int id)
-{
-    var regiao = await _context.RegioesRisco
-        .Include(r => r.Alertas)
-        .FirstOrDefaultAsync(r => r.Id == id);
+        public async Task<ActionResult<object>> GetById(int id)
+        {
+            var regiao = await _context.RegioesRisco
+                .Include(r => r.Alertas)
+                .FirstOrDefaultAsync(r => r.Id == id);
 
-    if (regiao == null)
-        return NotFound();
+            if (regiao == null)
+                return NotFound();
 
-    var response = new
-    {
-        regiao,
-        links = new List<object>
+            var response = new
+            {
+                regiao,
+                links = new List<object>
         {
             new { rel = "self", href = Url.Action(nameof(GetById), new { id = regiao.Id }), method = "GET" },
             new { rel = "update", href = Url.Action(nameof(Update), new { id = regiao.Id }), method = "PUT" },
             new { rel = "delete", href = Url.Action(nameof(Delete), new { id = regiao.Id }), method = "DELETE" }
         }
-    };
+            };
 
-    return Ok(response);
+            return Ok(response);
 }
-
 
        [HttpPost]
-public async Task<ActionResult<Abrigo>> Create(Abrigo abrigo)
-{
-    _context.Abrigos.Add(abrigo);
-    await _context.SaveChangesAsync();
-    return CreatedAtAction(nameof(GetById), new { id = abrigo.Id }, abrigo);
-}
+       public async Task<ActionResult<Abrigo>> Create(Abrigo abrigo)
+       {
+           _context.Abrigos.Add(abrigo);
+           await _context.SaveChangesAsync();
+           return CreatedAtAction(nameof(GetById), new { id = abrigo.Id }, abrigo);
+       }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Abrigo abrigo)
