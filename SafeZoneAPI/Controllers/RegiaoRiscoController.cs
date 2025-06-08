@@ -20,52 +20,62 @@ namespace SafeZoneAPI.Controllers
             _context = context;
         }
 
-       [HttpGet]
-public async Task<IActionResult> GetAll()
+        // ✅ Método principal com [HttpGet]
+        [HttpGet("{id}")]
+public async Task<ActionResult<RegiaoRisco>> GetRegiaoRisco(int id)
 {
-    try
-    {
-        var regioes = await _context.RegioesRisco
-            .Include(r => r.Alertas)
-            .ToListAsync();
-
-        return Ok(regioes);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Erro em GetAll: {ex.Message}");
-        return StatusCode(500, $"Erro interno: {ex.Message}");
-    }
-}
-public async Task<ActionResult<object>> GetById(int id)
-{
-    var regiao = await _context.RegioesRisco
-        .Include(r => r.Alertas)
-        .FirstOrDefaultAsync(r => r.Id == id);
+    var regiao = await _context.RegioesRisco.FindAsync(id);
 
     if (regiao == null)
         return NotFound();
 
     var response = new
     {
-        regiao,
-        links = new List<object>
+        regiao.Id,
+        regiao.Nome,
+        regiao.TipoRisco,
+        _links = new
         {
-            new { rel = "self", href = Url.Action(nameof(GetById), new { id = regiao.Id }), method = "GET" },
-            new { rel = "update", href = Url.Action(nameof(Update), new { id = regiao.Id }), method = "PUT" },
-            new { rel = "delete", href = Url.Action(nameof(Delete), new { id = regiao.Id }), method = "DELETE" }
+            self = Url.Action(nameof(GetRegiaoRisco), new { id = regiao.Id }),
+            update = Url.Action(nameof(Update), new { id = regiao.Id }),
+            delete = Url.Action(nameof(Delete), new { id = regiao.Id })
         }
     };
 
     return Ok(response);
 }
 
+        // ✅ Método alternativo com nome diferente
+        [HttpGet("with-links/{id}")]
+        public async Task<ActionResult<object>> GetByIdWithLinks(int id)
+        {
+            var regiao = await _context.RegioesRisco
+                .Include(r => r.Alertas)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (regiao == null)
+                return NotFound();
+
+            var response = new
+            {
+                regiao,
+                links = new List<object>
+                {
+                    new { rel = "self", href = Url.Action(nameof(GetByIdWithLinks), new { id = regiao.Id }), method = "GET" },
+                    new { rel = "update", href = Url.Action(nameof(Update), new { id = regiao.Id }), method = "PUT" },
+                    new { rel = "delete", href = Url.Action(nameof(Delete), new { id = regiao.Id }), method = "DELETE" }
+                }
+            };
+
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<ActionResult<RegiaoRisco>> Create(RegiaoRisco regiao)
         {
             _context.RegioesRisco.Add(regiao);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = regiao.Id }, regiao);
+            return CreatedAtAction(nameof(GetRegiaoRisco), new { id = regiao.Id }, regiao);
         }
 
         [HttpPut("{id}")]

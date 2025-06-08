@@ -6425,11 +6425,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Ander\\SafeZoneAPI\\SafeZoneAPI\\SafeZoneAPI.csproj",
+      "projectUniqueName": "C:\\Users\\Ander\\OneDrive\\Documentos\\SafeZoneAPI\\SafeZoneAPI\\SafeZoneAPI.csproj",
       "projectName": "SafeZoneAPI",
-      "projectPath": "C:\\Users\\Ander\\SafeZoneAPI\\SafeZoneAPI\\SafeZoneAPI.csproj",
+      "projectPath": "C:\\Users\\Ander\\OneDrive\\Documentos\\SafeZoneAPI\\SafeZoneAPI\\SafeZoneAPI.csproj",
       "packagesPath": "C:\\Users\\Ander\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Ander\\SafeZoneAPI\\SafeZoneAPI\\obj\\",
+      "outputPath": "C:\\Users\\Ander\\OneDrive\\Documentos\\SafeZoneAPI\\SafeZoneAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

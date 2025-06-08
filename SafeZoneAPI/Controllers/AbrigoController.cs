@@ -51,13 +51,13 @@ public async Task<ActionResult<object>> GetById(int id)
 }
 
 
-        [HttpPost]
-        public async Task<ActionResult<Abrigo>> Create(Abrigo abrigo)
-        {
-            _context.Abrigos.Add(abrigo);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = abrigo.Id }, abrigo);
-        }
+       [HttpPost]
+public async Task<ActionResult<Abrigo>> Create(Abrigo abrigo)
+{
+    _context.Abrigos.Add(abrigo);
+    await _context.SaveChangesAsync();
+    return CreatedAtAction(nameof(GetById), new { id = abrigo.Id }, abrigo);
+}
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Abrigo abrigo)
